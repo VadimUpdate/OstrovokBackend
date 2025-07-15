@@ -21,63 +21,6 @@ class SettingService(
     private val userSettingValueRepository: UserSettingValueRepository
 ) {
 
-    private val repoDir = File("C:\\Users\\user\\IdeaProjects\\Admin-consol\\Configs")
-
-    fun pushConfigToGit(configFileName: String, content: String) {
-        val configFile = File(repoDir, configFileName)
-
-        configFile.writeText(content)
-
-        val commands = listOf(
-            "git -C ${repoDir.absolutePath} add $configFileName",
-            "git -C ${repoDir.absolutePath} commit -m \"Update config $configFileName\"",
-            "git -C ${repoDir.absolutePath} push"
-        )
-
-        for (cmd in commands) {
-            val process = Runtime.getRuntime().exec(cmd)
-            process.waitFor()
-            if (process.exitValue() != 0) {
-                val error = process.errorStream.bufferedReader().readText()
-                throw RuntimeException("Git command failed: $cmd\nError: $error")
-            }
-        }
-    }
-
-    fun generateYamlForUser(user: User): String {
-        val settings = getSettingsForUser(user)
-        val map = mutableMapOf<String, Any>()
-        for (setting in settings) {
-            map[setting.name] = parseValue(setting.value)
-        }
-
-        val options = DumperOptions().apply {
-            defaultFlowStyle = DumperOptions.FlowStyle.BLOCK
-            isPrettyFlow = true
-        }
-        val yaml = Yaml(options)
-        return yaml.dump(map)
-    }
-
-    fun printRepoDir() {
-        println("Repo directory absolute path: ${repoDir.absolutePath}")
-        if (repoDir.exists() && repoDir.isDirectory) {
-            println("Repo directory exists and is a directory")
-        } else {
-            println("Repo directory does NOT exist or is not a directory")
-        }
-    }
-
-    private fun parseValue(value: String): Any {
-        return when {
-            value.equals("true", ignoreCase = true) -> true
-            value.equals("false", ignoreCase = true) -> false
-            value.toIntOrNull() != null -> value.toInt()
-            value.toDoubleOrNull() != null -> value.toDouble()
-            else -> value
-        }
-    }
-
     fun getSettingsForUser(user: User): List<SettingDto> {
         val globalSettings = settingRepository.findAll()
         val userSettings = userSettingValueRepository.findByUser(user).associateBy { it.setting.id }
@@ -108,13 +51,6 @@ class SettingService(
                 value = newValue
             )
             userSettingValueRepository.save(newUserSettingValue)
-        }
-
-        try {
-            val yamlContent = generateYamlForUser(user)
-            pushConfigToGit("application.yml", yamlContent)
-        } catch (ex: Exception) {
-            println("Git push failed: ${ex.message}")
         }
     }
 }
