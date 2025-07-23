@@ -11,13 +11,11 @@ export default function LoginForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:8080/api/auth/login', {
-                username,
-                password
-            }, { withCredentials: true });
+            const response = await axios.post('/api/auth/login', { username, password }, { withCredentials: true })
 
             if (response.status === 200) {
-                localStorage.setItem("token", response.data.token); // сохраняем токен
+                localStorage.setItem("token", response.data.token);
+                localStorage.setItem("role", response.data.role);// сохраняем токен
                 navigate('/settings');
             }
         } catch (error) {
@@ -28,12 +26,12 @@ export default function LoginForm() {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-black px-4 relative">
-            <div className="absolute inset-0 bg-black bg-opacity-80 backdrop-blur-sm z-0"></div>
+            <div className="absolute inset-0 bg-black"></div>
             <div className="relative z-10 w-full max-w-md p-8 rounded-lg border border-white/30 backdrop-blur-md shadow-xl">
-                <h2 className="text-3xl text-white text-center mb-6 font-semibold">Вход</h2>
+                <h2 className="text-3xl text-white text-center mb-8 font-semibold">Вход</h2>
 
                 <form onSubmit={handleSubmit}>
-                    <div className="relative mb-6 border-b-2 border-gray-300">
+                    <div className="relative mb-8 border-b-2 border-gray-300">
                         <input
                             type="text"
                             id="username"
@@ -41,7 +39,7 @@ export default function LoginForm() {
                             onChange={(e) => setUsername(e.target.value)}
                             required
                             placeholder=" "
-                            className="w-full px-0 py-2 text-white bg-transparent border-none outline-none peer"
+                            className="w-full px-0 py-3 text-white bg-transparent border-none outline-none peer"
                         />
                         <label
                             htmlFor="username"
@@ -53,7 +51,7 @@ export default function LoginForm() {
                         </label>
                     </div>
 
-                    <div className="relative mb-6 border-b-2 border-gray-300">
+                    <div className="relative mb-8 border-b-2 border-gray-300">
                         <input
                             type="password"
                             id="password"

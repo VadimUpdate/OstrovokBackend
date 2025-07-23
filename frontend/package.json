@@ -1,4 +1,6 @@
 {
+  "build": "react-scripts build",
+  "type": "module",
   "name": "vite-react-tailwind-starter",
   "version": "0.0.1",
   "private": true,
@@ -9,6 +11,8 @@
   },
   "dependencies": {
     "axios": "^1.10.0",
+    "express": "^5.1.0",
+    "http-proxy-middleware": "^3.0.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.6.3"

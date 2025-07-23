@@ -5,7 +5,7 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 class CustomUserDetails(
-    val user: User  // ✅ доступен снаружи, getUser() создаётся автоматически
+    val user: User  // доступен снаружи, getUser() создаётся автоматически
 ) : UserDetails {
 
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> = mutableListOf()

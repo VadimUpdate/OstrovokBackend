@@ -2,38 +2,43 @@ import {
     BrowserRouter,
     Routes,
     Route,
-    Navigate          // ← добавляем здесь
+    Navigate,
 } from "react-router-dom";
 
 import LoginForm from "./components/LoginForm";
-import SettingsTable from "./components/SettingsTable";
-import ProtectedRoute from "./components/ProtectedRoute";
 import RegisterForm from "./components/RegisterForm";
+import ProtectedRoute from "./components/ProtectedRoute";
+import SettingsPage from "./components/SettingsPage"; // импорт
+
 function App() {
     return (
         <BrowserRouter>
             <Routes>
-                {/* 1️⃣ Публичные */}
+                {/* Публичные */}
                 <Route path="/login" element={<LoginForm />} />
                 <Route path="/register" element={<RegisterForm />} />
 
-                {/* 2️⃣ Защищённые */}
+                {/* Защищённые */}
                 <Route element={<ProtectedRoute />}>
-                    <Route path="/settings" element={<SettingsTable />} />
+                    {/* Роут с параметром section */}
+                    <Route path="/settings/:section" element={<SettingsPage />} />
+                    {/* Роут по умолчанию, если section не указан */}
+                    <Route path="/settings" element={<Navigate to="/settings/test" replace />} />
                 </Route>
 
-                {/* 3️⃣ Вишлист: всё, чего не поймали выше */}
+                {/* Редиректы */}
                 <Route
                     path="*"
                     element={
-                        localStorage.getItem("token")
-                            ? <Navigate to="/settings" />
-                            : <Navigate to="/login" />
+                        localStorage.getItem("token") ? (
+                            <Navigate to="/settings/test" replace />
+                        ) : (
+                            <Navigate to="/login" replace />
+                        )
                     }
                 />
             </Routes>
         </BrowserRouter>
-
     );
 }
 

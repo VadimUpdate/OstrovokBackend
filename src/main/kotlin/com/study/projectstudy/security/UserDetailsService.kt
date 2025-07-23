@@ -22,7 +22,13 @@ class CustomUserDetailsService(
     override fun loadUserByUsername(username: String): UserDetails {
         val user: User = userRepository.findByUsername(username)
             ?: throw UsernameNotFoundException("User '$username' not found")
-
         return CustomUserDetails(user)
+    }
+
+    // Добавь этот метод
+    fun getUserRole(username: String): String {
+        val user: User = userRepository.findByUsername(username)
+            ?: throw UsernameNotFoundException("User '$username' not found")
+        return user.role  // предполагается, что у User есть поле role типа String
     }
 }

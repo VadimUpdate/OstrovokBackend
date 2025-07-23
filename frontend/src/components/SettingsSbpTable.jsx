@@ -1,33 +1,34 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { fetchSettings, updateSetting } from "../api/settings.js";
 
-const SettingsTable = () => {
-    const { section } = useParams();
-    const currentSection = section || "test";
-
+const SettingsSbpTable = () => {
     const [settings, setSettings] = useState([]);
     const [originalSettings, setOriginalSettings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const section = "sbp";
 
     useEffect(() => {
         setLoading(true);
         setError(null);
 
-        fetchSettings(currentSection)
+        fetchSettings(section)
             .then((res) => {
-                if (!Array.isArray(res.data)) throw new Error("Invalid data");
+                if (!Array.isArray(res.data)) {
+                    throw new Error("Некорректный формат данных");
+                }
                 const first20 = res.data.slice(0, 20);
                 setSettings(first20);
                 setOriginalSettings(first20);
             })
             .catch((e) => {
-                setError("Ошибка загрузки настроек");
                 console.error(e);
+                setError("Ошибка загрузки настроек");
             })
-            .finally(() => setLoading(false));
-    }, [currentSection]);
+            .finally(() => {
+                setLoading(false);
+            });
+    }, []);
 
     if (loading) return <div>Загрузка...</div>;
     if (error) return <div style={{ color: "red" }}>{error}</div>;
@@ -40,7 +41,7 @@ const SettingsTable = () => {
 
     const handleSaveAll = () => {
         const requests = settings.map((s) =>
-            updateSetting(s.id, { value: s.value, section: currentSection })
+            updateSetting(s.id, { value: s.value, section })
         );
         Promise.all(requests)
             .then(() => {
@@ -55,7 +56,7 @@ const SettingsTable = () => {
     };
 
     return (
-        <>
+        <div>
             <div className="border border-gray-300 rounded-md overflow-hidden">
                 <table className="w-full table-fixed border-collapse">
                     <thead className="bg-gray-100">
@@ -119,8 +120,8 @@ const SettingsTable = () => {
                     Сохранить
                 </button>
             </div>
-        </>
+        </div>
     );
 };
 
-export default SettingsTable;
+export default SettingsSbpTable;

@@ -25,9 +25,13 @@ class AuthController(
 
     @PostMapping("/login")
     fun login(@RequestBody request: AuthRequest): ResponseEntity<AuthResponse> {
-        return if (authService.authenticate(request.username, request.password)) {
-            val token = jwtUtil.generateToken(request.username)
-            ResponseEntity.ok(AuthResponse(token))
+        val authenticated = authService.authenticate(request.username, request.password)
+        return if (authenticated) {
+            val user = authService.getUserByUsername(request.username)
+            val role = user?.role ?: "ROLE_USER"
+
+            val token = jwtUtil.generateToken(request.username, role)
+            ResponseEntity.ok(AuthResponse(token, role))
         } else {
             ResponseEntity.status(401).build()
         }

@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface SettingRepository : JpaRepository<Setting, Long> {
-    // можно добавить кастомные методы если нужно
+    fun findAllByOrderByIdAsc(): List<Setting>
 }
