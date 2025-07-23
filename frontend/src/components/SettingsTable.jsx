@@ -105,7 +105,7 @@ const SettingsTable = () => {
                 </table>
             </div>
 
-            <div className="flex justify-end gap-4 mt-6">
+            <div className="flex flex-wrap justify-end gap-4 mt-6">
                 <button
                     onClick={handleCancel}
                     className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded"
