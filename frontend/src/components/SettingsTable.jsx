@@ -1,36 +1,8 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { fetchSettings, updateSetting } from "../api/settings.js";
+import React, { useState } from "react";
+import { updateSetting } from "../api/settings.jsx";
 
-const SettingsTable = () => {
-    const { section } = useParams();
-    const currentSection = section || "test";
-
-    const [settings, setSettings] = useState([]);
-    const [originalSettings, setOriginalSettings] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        setLoading(true);
-        setError(null);
-
-        fetchSettings(currentSection)
-            .then((res) => {
-                if (!Array.isArray(res.data)) throw new Error("Invalid data");
-                const first20 = res.data.slice(0, 20);
-                setSettings(first20);
-                setOriginalSettings(first20);
-            })
-            .catch((e) => {
-                setError("Ошибка загрузки настроек");
-                console.error(e);
-            })
-            .finally(() => setLoading(false));
-    }, [currentSection]);
-
-    if (loading) return <div>Загрузка...</div>;
-    if (error) return <div style={{ color: "red" }}>{error}</div>;
+const SettingsTable = ({ settings }) => {
+    const [originalSettings, setOriginalSettings] = useState(settings);
 
     const handleChange = (id, newValue) => {
         setSettings((prev) =>
@@ -40,7 +12,7 @@ const SettingsTable = () => {
 
     const handleSaveAll = () => {
         const requests = settings.map((s) =>
-            updateSetting(s.id, { value: s.value, section: currentSection })
+            updateSetting(s.id, { value: s.value })
         );
         Promise.all(requests)
             .then(() => {
@@ -55,7 +27,7 @@ const SettingsTable = () => {
     };
 
     return (
-        <>
+        <div>
             <div className="border border-gray-300 rounded-md overflow-hidden">
                 <table className="w-full table-fixed border-collapse">
                     <thead className="bg-gray-100">
@@ -66,8 +38,7 @@ const SettingsTable = () => {
                     </thead>
                     <tbody>
                     {settings.map((setting) => {
-                        const isBool =
-                            setting.value === "true" || setting.value === "false";
+                        const isBool = setting.value === "true" || setting.value === "false";
                         const boolValue = setting.value === "true";
 
                         return (
@@ -105,7 +76,7 @@ const SettingsTable = () => {
                 </table>
             </div>
 
-            <div className="flex flex-wrap justify-end gap-4 mt-6">
+            <div className="flex justify-end gap-4 mt-6">
                 <button
                     onClick={handleCancel}
                     className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded"
@@ -119,7 +90,7 @@ const SettingsTable = () => {
                     Сохранить
                 </button>
             </div>
-        </>
+        </div>
     );
 };
 
