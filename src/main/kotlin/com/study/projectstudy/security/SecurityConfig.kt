@@ -1,7 +1,5 @@
 package com.study.projectstudy.security
 
-import com.study.projectstudy.security.JwtAuthFilter
-import com.study.projectstudy.security.CustomUserDetailsService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -21,7 +19,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
-import com.study.projectstudy.security.JwtUtil
 
 @Configuration
 @EnableWebSecurity
@@ -37,7 +34,7 @@ class SecurityConfig(
             .authorizeHttpRequests {
                 it
                     .requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers("/api/sbp/admin/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")  // Используем hasAnyAuthority
+                    .requestMatchers("/api/sbp/admin/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                     .requestMatchers("/api/sbp/**").hasAuthority("ROLE_ADMIN")  // Только для ROLE_ADMIN
                     .anyRequest().authenticated()
             }
@@ -46,7 +43,7 @@ class SecurityConfig(
             }
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
-
+            .cors()
 
         return http.build()
     }

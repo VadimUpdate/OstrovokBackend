@@ -31,30 +31,17 @@ class JwtAuthFilter(
         }
 
         val authHeader = request.getHeader("Authorization")
-        println("Authorization Header: $authHeader")  // Логируем заголовок
-
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             val token = authHeader.substring(7)
-            println("Extracted Token: $token")  // Логируем извлеченный токен
-
             try {
                 val username = jwtUtil.getUsernameFromToken(token)
-                println("Username from token: $username")  // Логируем имя пользователя из токена
-
                 if (username != null && SecurityContextHolder.getContext().authentication == null) {
                     val userDetails = userDetailsService.loadUserByUsername(username)
-
-                    // Исправленная проверка ролей без двойного префикса
                     val authorities = userDetails.authorities
-                    println("User Authorities: $authorities")  // Логируем роли пользователя
 
-                    // Проверяем наличие ролей с учетом "ROLE_" и без "ROLE_ROLE_"
-                    val validRoles = listOf("ADMIN", "USER")
-                    val role = authorities.find { authority ->
-                        validRoles.any { role -> authority.authority.contains(role) }
-                    }
-
-                    if (role != null && jwtUtil.validateToken(token)) {
+                    // Проверяем, есть ли роль "ADMIN" (без префикса ROLE_)
+                    val normalizedAuthorities = authorities.map { it.authority.replace("ROLE_", "") }
+                    if (normalizedAuthorities.contains("ADMIN") && jwtUtil.validateToken(token)) {
                         val authToken = UsernamePasswordAuthenticationToken(
                             userDetails, null, authorities
                         )
@@ -65,7 +52,6 @@ class JwtAuthFilter(
                     }
                 }
             } catch (ex: Exception) {
-                println("Token processing error: ${ex.message}")
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Token processing error")
                 return
             }

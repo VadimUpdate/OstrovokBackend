@@ -25,7 +25,6 @@ class JwtUtil {
             .compact()
     }
 
-
     fun validateToken(token: String): Boolean {
         return try {
             Jwts.parserBuilder()

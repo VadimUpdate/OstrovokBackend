@@ -20,9 +20,10 @@ class SettingController(private val settingService: SettingService) {
     fun getSettings(@RequestParam(required = false) section: String): ResponseEntity<Any> {
         val authentication: Authentication = SecurityContextHolder.getContext().authentication
         val authorities = authentication.authorities
+        val normalizedAuthorities = authorities.map { it.authority.replace("ROLE_", "") }
 
         logger.info("Received request to /api/settings with section: $section")
-        logger.info("User: ${authentication.name}, Authorities: $authorities")
+        logger.info("User: ${authentication.name}, Authorities: $normalizedAuthorities")
 
         // Секция "test" доступна для всех пользователей
         if (section == "test") {
@@ -31,7 +32,7 @@ class SettingController(private val settingService: SettingService) {
         }
 
         // Секция "sbp" доступна только для "ROLE_ADMIN"
-        if (section == "sbp" && authorities.contains(SimpleGrantedAuthority("ROLE_ADMIN"))) {
+        if (section == "sbp" && normalizedAuthorities.contains("ADMIN")) {
             val settings = settingService.getSettings(section)
             return ResponseEntity.ok(settings)
         }
