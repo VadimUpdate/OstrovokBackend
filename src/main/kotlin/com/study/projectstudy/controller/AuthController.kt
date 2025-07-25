@@ -30,7 +30,9 @@ class AuthController(
             val user = authService.getUserByUsername(request.username)
             val role = user?.role ?: "ROLE_USER"
 
+            // Передаем username и роль в метод generateToken
             val token = jwtUtil.generateToken(request.username, role)
+
             ResponseEntity.ok(AuthResponse(token, role))
         } else {
             ResponseEntity.status(401).build()

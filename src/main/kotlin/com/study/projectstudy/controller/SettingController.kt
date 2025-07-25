@@ -1,40 +1,43 @@
 package com.study.projectstudy.controller
 
 import com.study.projectstudy.service.SettingService
-import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
-import java.nio.file.AccessDeniedException
+import org.springframework.http.ResponseEntity
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.Authentication
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.http.HttpStatus
 
 @RestController
 @RequestMapping("/api/settings")
-@PreAuthorize("hasRole('ADMIN')")
-class SettingController(
-    private val settingService: SettingService
-) {
+class SettingController(private val settingService: SettingService) {
+
+    private val logger = LoggerFactory.getLogger(SettingController::class.java)
 
     @GetMapping
-    fun getSettings(@RequestParam section: String?): List<Any> {
-        println("➡ section from controller = $section")
-        val authentication = SecurityContextHolder.getContext().authentication
-        val isAdmin = authentication.authorities.contains(SimpleGrantedAuthority("ROLE_ADMIN"))
+    fun getSettings(@RequestParam(required = false) section: String): ResponseEntity<Any> {
+        val authentication: Authentication = SecurityContextHolder.getContext().authentication
+        val authorities = authentication.authorities
 
-        if (section == "sbp" && !isAdmin) {
-            throw AccessDeniedException("Доступ запрещён")
+        logger.info("Received request to /api/settings with section: $section")
+        logger.info("User: ${authentication.name}, Authorities: $authorities")
+
+        // Секция "test" доступна для всех пользователей
+        if (section == "test") {
+            val settings = settingService.getSettings(section)
+            return ResponseEntity.ok(settings)
         }
 
-        return settingService.getSettings(section)
-    }
+        // Секция "sbp" доступна только для "ROLE_ADMIN"
+        if (section == "sbp" && authorities.contains(SimpleGrantedAuthority("ROLE_ADMIN"))) {
+            val settings = settingService.getSettings(section)
+            return ResponseEntity.ok(settings)
+        }
 
-
-    @PutMapping("/{id}")
-    fun updateSetting(
-        @PathVariable id: Long,
-        @RequestBody dto: Map<String, String>
-    ) {
-        val newValue = dto["value"] ?: throw IllegalArgumentException("Missing value")
-        val section = dto["section"] ?: "test"
-        settingService.updateSetting(id, section, newValue)
+        // Если роль не соответствует, возвращаем 403
+        logger.error("Access Denied: Invalid role or section for section: $section")
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied")
     }
 }

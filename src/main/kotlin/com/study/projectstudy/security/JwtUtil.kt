@@ -1,6 +1,5 @@
 package com.study.projectstudy.security
 
-import com.study.projectstudy.repository.UserRepository
 import io.jsonwebtoken.*
 import io.jsonwebtoken.security.Keys
 import org.springframework.stereotype.Component
@@ -19,19 +18,20 @@ class JwtUtil {
 
         return Jwts.builder()
             .setSubject(username)
-            .claim("role", role)
+            .claim("role", role.replace("ROLE_ROLE_", "ROLE_"))  // Очистить лишний префикс
             .setIssuedAt(now)
             .setExpiration(expiryDate)
             .signWith(jwtSecret)
             .compact()
     }
 
+
     fun validateToken(token: String): Boolean {
         return try {
             Jwts.parserBuilder()
                 .setSigningKey(jwtSecret)
                 .build()
-                .parseClaimsJws(token)
+                .parseClaimsJws(token) // это проверяет, валиден ли токен
             true
         } catch (ex: JwtException) {
             false

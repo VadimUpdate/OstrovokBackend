@@ -14,5 +14,5 @@ data class User(
     val password: String,
 
     // например, роли храним строкой с разделителем, можно и коллекцию, но проще пока так
-    val role: String = "ROLE_ADMIN"  // значение по умолчанию
+    val role: String = "ROLE_USER"  // значение по умолчанию
 )

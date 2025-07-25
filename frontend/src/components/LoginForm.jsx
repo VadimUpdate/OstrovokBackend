@@ -11,16 +11,20 @@ export default function LoginForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('/api/auth/login', { username, password }, { withCredentials: true })
+            const response = await axios.post('/api/auth/login', { username, password }, { withCredentials: true });
 
             if (response.status === 200) {
-                localStorage.setItem("token", response.data.token);
-                localStorage.setItem("role", response.data.role);// сохраняем токен
+                const { token, role } = response.data;
+                localStorage.setItem("token", token);
+                localStorage.setItem("role", role);
+                console.log("Token:", token);  // Логируем токен
+                console.log("Role:", role);    // Логируем роль
+
                 navigate('/settings');
             }
         } catch (error) {
             console.error('Ошибка при входе:', error);
-            alert('Неверные данные');
+            alert('Неверные данные или серверная ошибка');
         }
     };
 

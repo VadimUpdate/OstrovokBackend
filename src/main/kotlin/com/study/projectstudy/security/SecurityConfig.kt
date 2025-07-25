@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import com.study.projectstudy.security.JwtUtil
 
 @Configuration
 @EnableWebSecurity
@@ -36,15 +37,16 @@ class SecurityConfig(
             .authorizeHttpRequests {
                 it
                     .requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers("/api/sbp/admin/**").hasRole("ADMIN")
-                    .requestMatchers("/api/sbp/**").authenticated()
-                    .anyRequest().permitAll()
+                    .requestMatchers("/api/sbp/admin/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")  // Используем hasAnyAuthority
+                    .requestMatchers("/api/sbp/**").hasAuthority("ROLE_ADMIN")  // Только для ROLE_ADMIN
+                    .anyRequest().authenticated()
             }
             .sessionManagement {
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
+
 
         return http.build()
     }
@@ -59,5 +61,15 @@ class SecurityConfig(
 
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
-}
 
+    @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration()
+        configuration.addAllowedOrigin("*")
+        configuration.addAllowedMethod("*")
+        configuration.addAllowedHeader("*")
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", configuration)
+        return source
+    }
+}

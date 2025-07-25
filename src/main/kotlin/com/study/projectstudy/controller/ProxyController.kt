@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.RestTemplate
 import java.util.Collections
 import org.springframework.http.HttpMethod
+import com.study.projectstudy.security.JwtUtil
 
 @RestController
 @RequestMapping("/proxy")
@@ -26,16 +27,32 @@ class ProxyController(private val restTemplate: RestTemplate) {
             headers.addAll(headerName, Collections.list(request.getHeaders(headerName)))
         }
 
+        // Добавляем авторизационный заголовок, если он есть
+        val authHeader = request.getHeader("Authorization")
+        if (authHeader != null) {
+            headers.set("Authorization", authHeader)
+        }
+
         val httpMethod = try {
             HttpMethod.valueOf(request.method)
         } catch (ex: IllegalArgumentException) {
             HttpMethod.GET
         }
+
         val entity = HttpEntity(body, headers)
+
+        // Отправка запроса на бэкенд
         val response = restTemplate.exchange(url, httpMethod, entity, String::class.java)
 
+        // Заголовки для ответа
         val responseHeaders = HttpHeaders()
         response.headers.forEach { (key, values) -> responseHeaders.put(key, values) }
+
+        // Обработка CORS в ответе
+        responseHeaders.add("Access-Control-Allow-Origin", "*")
+        responseHeaders.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        responseHeaders.add("Access-Control-Allow-Headers", "Content-Type, Authorization, Origin, Accept")
+        responseHeaders.add("Access-Control-Allow-Credentials", "true")
 
         return ResponseEntity(response.body, responseHeaders, response.statusCode)
     }

@@ -6,6 +6,7 @@ import com.study.projectstudy.repository.SettingRepository
 import com.study.projectstudy.repository.SettingSbpRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import com.study.projectstudy.security.JwtUtil
 
 @Service
 class SettingService(
@@ -15,7 +16,7 @@ class SettingService(
 
     fun getSettings(section: String?): List<Any> {
         val normalized = section?.trim()?.lowercase()
-        println(">>> normalized section = '$normalized'")
+        println(">>> normalized section = '$normalized'")  // Это можно удалить, если не нужно логировать
         return if (normalized == "sbp") {
             getSettingsSbp()
         } else {

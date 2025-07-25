@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import java.io.IOException
@@ -25,48 +24,52 @@ class JwtAuthFilter(
         filterChain: FilterChain
     ) {
         val path = request.servletPath
-        println("🛡 JwtAuthFilter: обработка пути $path")
-
-        // Пропускаем публичные маршруты без проверки токена
+        // Пропускаем пути для регистрации и логина
         if (path.startsWith("/api/auth/register") || path.startsWith("/api/auth/login")) {
-            println("➡ Публичный маршрут — пропуск без проверки токена")
             filterChain.doFilter(request, response)
             return
         }
 
         val authHeader = request.getHeader("Authorization")
-        println("🔐 Authorization header: $authHeader")
+        println("Authorization Header: $authHeader")  // Логируем заголовок
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             val token = authHeader.substring(7)
-            println("🔑 JWT token: $token")
+            println("Extracted Token: $token")  // Логируем извлеченный токен
 
             try {
                 val username = jwtUtil.getUsernameFromToken(token)
-                println("👤 Username из токена: $username")
+                println("Username from token: $username")  // Логируем имя пользователя из токена
 
                 if (username != null && SecurityContextHolder.getContext().authentication == null) {
                     val userDetails = userDetailsService.loadUserByUsername(username)
-                    println("📦 UserDetails найден: ${userDetails.username}")
 
-                    if (jwtUtil.validateToken(token)) {
-                        println("✅ Токен валиден. Устанавливаем аутентификацию.")
+                    // Исправленная проверка ролей без двойного префикса
+                    val authorities = userDetails.authorities
+                    println("User Authorities: $authorities")  // Логируем роли пользователя
+
+                    // Проверяем наличие ролей с учетом "ROLE_" и без "ROLE_ROLE_"
+                    val validRoles = listOf("ADMIN", "USER")
+                    val role = authorities.find { authority ->
+                        validRoles.any { role -> authority.authority.contains(role) }
+                    }
+
+                    if (role != null && jwtUtil.validateToken(token)) {
                         val authToken = UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.authorities
+                            userDetails, null, authorities
                         )
-                        authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
                         SecurityContextHolder.getContext().authentication = authToken
                     } else {
-                        println("⛔ Токен недействителен")
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid token or role")
+                        return
                     }
                 }
             } catch (ex: Exception) {
-                println("❌ Ошибка при обработке токена: ${ex.message}")
+                println("Token processing error: ${ex.message}")
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Token processing error")
+                return
             }
-        } else {
-            println("⚠ Заголовок Authorization отсутствует или неверный")
         }
-
         filterChain.doFilter(request, response)
     }
 }
