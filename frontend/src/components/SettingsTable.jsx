@@ -1,30 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import { updateSetting } from "../api/settings.jsx";
 
-const SettingsTable = ({ settings }) => {
+const SettingsTable = ({ settings, section }) => {
     const [originalSettings, setOriginalSettings] = useState(settings);
 
+    // Фильтруем настройки по разделу
+    const filteredSettings = originalSettings.filter((setting) => setting.section === section);
+
+    // Изменение значения в ячейке
     const handleChange = (id, newValue) => {
-        setSettings((prev) =>
-            prev.map((s) => (s.id === id ? { ...s, value: newValue } : s))
-        );
+        // Изменяем значение только в фильтрованных данных
+        const updatedSettings = [...originalSettings];
+        const index = updatedSettings.findIndex((s) => s.id === id);
+
+        if (index !== -1) {
+            updatedSettings[index] = { ...updatedSettings[index], value: newValue };
+            setOriginalSettings(updatedSettings);  // Обновляем только измененную строку
+        }
     };
 
+    // Сохранение всех изменений
     const handleSaveAll = () => {
-        const requests = settings.map((s) =>
+        const requests = filteredSettings.map((s) =>
             updateSetting(s.id, { value: s.value })
         );
         Promise.all(requests)
             .then(() => {
-                setOriginalSettings(settings);
                 alert("Сохранено!");
             })
             .catch(() => alert("Ошибка при сохранении"));
     };
 
+    // Отмена всех изменений
     const handleCancel = () => {
-        setSettings(originalSettings);
+        setOriginalSettings(settings); // Сбросить изменения
     };
+
+    useEffect(() => {
+        // Обновляем таблицу при изменении исходных данных
+        setOriginalSettings(settings);
+    }, [settings]); // Когда settings меняются, обновляем originalSettings
 
     return (
         <div>
@@ -37,7 +52,7 @@ const SettingsTable = ({ settings }) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {settings.map((setting) => {
+                    {filteredSettings.map((setting) => {
                         const isBool = setting.value === "true" || setting.value === "false";
                         const boolValue = setting.value === "true";
 

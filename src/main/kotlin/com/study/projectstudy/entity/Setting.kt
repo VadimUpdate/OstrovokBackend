@@ -10,6 +10,7 @@ data class Setting(
 
     val name: String,
 
+
     @Column(name = "default_value")
     var defaultValue: String
 )
