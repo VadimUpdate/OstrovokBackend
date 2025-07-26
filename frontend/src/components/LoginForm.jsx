@@ -43,7 +43,7 @@ export default function LoginForm() {
                             onChange={(e) => setUsername(e.target.value)}
                             required
                             placeholder=" "
-                            className="w-full px-0 py-3 text-white bg-transparent border-none outline-none peer"
+                            className="w-full px-0 pt-6 pb-2 text-white bg-transparent border-none outline-none peer"
                         />
                         <label
                             htmlFor="username"
@@ -63,7 +63,7 @@ export default function LoginForm() {
                             onChange={(e) => setPassword(e.target.value)}
                             required
                             placeholder=" "
-                            className="w-full px-0 py-2 text-white bg-transparent border-none outline-none peer"
+                            className="w-full px-0 pt-6 pb-2 text-white bg-transparent border-none outline-none peer"
                         />
                         <label
                             htmlFor="password"

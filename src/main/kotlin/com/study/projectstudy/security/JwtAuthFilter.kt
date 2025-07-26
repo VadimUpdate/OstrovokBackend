@@ -43,35 +43,21 @@ class JwtAuthFilter(
                 if (username != null && SecurityContextHolder.getContext().authentication == null) {
                     val userDetails = userDetailsService.loadUserByUsername(username)
 
-                    // Логирование роли пользователя
-                    logger.info("User details loaded for username: $username")
-
-                    // Проверяем, есть ли роль "ADMIN" или другие необходимые роли
-                    val authorities = userDetails.authorities
-                    val normalizedAuthorities = authorities.map { it.authority.replace("ROLE_", "") }
-                    logger.info("User roles: $normalizedAuthorities")
-
                     if (jwtUtil.validateToken(token)) {
-                        if (normalizedAuthorities.contains("ADMIN")) {
-                            val authToken = UsernamePasswordAuthenticationToken(
-                                userDetails, null, authorities
-                            )
-                            SecurityContextHolder.getContext().authentication = authToken
-                            logger.info("Authentication set for user: $username with roles: $normalizedAuthorities")
-                        } else {
-                            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden: Insufficient permissions")
-                            logger.warn("User '$username' has insufficient permissions")
-                            return
-                        }
+                        val authToken = UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.authorities
+                        )
+                        SecurityContextHolder.getContext().authentication = authToken
+                        logger.info("Authentication set for user: $username with roles: ${userDetails.authorities}")
                     } else {
                         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid token")
-                        logger.error("Invalid token for user '$username'")
+                        logger.warn("Invalid token for user '$username'")
                         return
                     }
                 }
             } catch (ex: Exception) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Token processing error")
-                logger.error("Error processing token for request: ${ex.message}", ex)
+                logger.error("Error processing token: ${ex.message}", ex)
                 return
             }
         } else {
