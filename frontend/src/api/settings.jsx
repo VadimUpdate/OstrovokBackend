@@ -1,41 +1,39 @@
 import axios from "axios";
 
+// Создание экземпляра axios с базовым URL
 const api = axios.create({
-    baseURL: '/api',          // Базовый URL для всех запросов
-    withCredentials: true,    // Отправка cookies с каждым запросом
+    baseURL: '/api',
+    withCredentials: true,
 });
 
 // Интерсептор для добавления токена в заголовок Authorization
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
-        config.headers.Authorization = `Bearer ${token}`;  // Добавление токена в заголовок
+        config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
 });
 
-// Пример запроса для получения настроек
+// Получение настроек
 export const fetchSettings = (section) => {
     if (!section) {
-        throw new Error("Section is required"); // Проверка наличия секции
+        throw new Error("Section is required");
     }
 
-    return api.get("/settings", { params: { section } })  // Запрос с параметром section
+    return api.get("/settings", { params: { section } })
         .catch((error) => {
-            console.error("Error fetching settings:", error); // Логирование ошибок
+            console.error("Error fetching settings:", error.response || error.message);
             throw error;
         });
 };
 
-// Пример запроса для обновления настройки
-export const updateSetting = (id, data) => {
-    if (!id || !data) {
-        throw new Error("ID and data are required to update the setting"); // Проверка параметров
-    }
-
-    return api.put(`/settings/${id}`, data)  // PUT запрос для обновления настройки по id
+// Обновление настройки
+export const updateSetting = (id, { section, newValue }) => {
+    return api.put(`/settings/${id}`, { section, newValue })
+        .then(res => res.data)
         .catch((error) => {
-            console.error("Error updating setting:", error); // Логирование ошибок
+            console.error("Error updating setting:", error.response || error.message);
             throw error;
         });
 };

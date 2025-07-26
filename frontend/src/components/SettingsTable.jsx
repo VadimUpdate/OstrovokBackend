@@ -2,44 +2,60 @@ import React, { useState, useEffect } from 'react';
 import { updateSetting } from "../api/settings.jsx";
 
 const SettingsTable = ({ settings, section }) => {
-    const [originalSettings, setOriginalSettings] = useState(settings);
+    const [originalSettings, setOriginalSettings] = useState(settings); // серверные данные
+    const [editedSettings, setEditedSettings] = useState(settings);     // редактируемые данные
 
-    // Фильтруем настройки по разделу
-    const filteredSettings = originalSettings.filter((setting) => setting.section === section);
+    // Фильтрация по разделу
+    const filteredSettings = editedSettings.filter(setting => setting.section === section);
 
-    // Изменение значения в ячейке
+    // Обработка изменений
     const handleChange = (id, newValue) => {
-        // Изменяем значение только в фильтрованных данных
-        const updatedSettings = [...originalSettings];
-        const index = updatedSettings.findIndex((s) => s.id === id);
-
+        const updatedSettings = [...editedSettings];
+        const index = updatedSettings.findIndex(s => s.id === id);
         if (index !== -1) {
             updatedSettings[index] = { ...updatedSettings[index], value: newValue };
-            setOriginalSettings(updatedSettings);  // Обновляем только измененную строку
+            setEditedSettings(updatedSettings);
         }
     };
 
-    // Сохранение всех изменений
     const handleSaveAll = () => {
-        const requests = filteredSettings.map((s) =>
-            updateSetting(s.id, { value: s.value })
-        );
+        const requests = editedSettings
+            .filter((s) => s.section === section)
+            .filter((s) => s.value !== originalSettings.find((os) => os.id === s.id)?.value)
+            .map((s) => {
+                let valueToSend = typeof s.value === 'boolean'
+                    ? s.value.toString()
+                    : s.value?.toString().trim();
+
+                if (!s.id || valueToSend === undefined || valueToSend === '') {
+                    console.error("Missing ID or value for setting ID:", s.id);
+                    return Promise.reject(new Error("ID and new value are required to update the setting"));
+                }
+
+                console.log("Sending ID:", s.id, "Value:", valueToSend);
+                return updateSetting(s.id, { section, newValue: valueToSend });
+            });
+
         Promise.all(requests)
             .then(() => {
+                console.log("Сохранено:", requests);
                 alert("Сохранено!");
+                setOriginalSettings(editedSettings); // зафиксировали новые значения как оригинальные
             })
-            .catch(() => alert("Ошибка при сохранении"));
+            .catch((error) => {
+                console.error("Ошибка при сохранении", error);
+                alert("Ошибка при сохранении");
+            });
     };
 
-    // Отмена всех изменений
     const handleCancel = () => {
-        setOriginalSettings(settings); // Сбросить изменения
+        setEditedSettings(originalSettings); // откат к оригиналу
     };
 
     useEffect(() => {
-        // Обновляем таблицу при изменении исходных данных
         setOriginalSettings(settings);
-    }, [settings]); // Когда settings меняются, обновляем originalSettings
+        setEditedSettings(settings);
+    }, [settings]);
 
     return (
         <div>

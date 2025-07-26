@@ -4,3 +4,4 @@ data class AuthResponse(
     val token: String,
     val role: String
 )
+

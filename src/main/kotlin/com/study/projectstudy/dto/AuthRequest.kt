@@ -8,3 +8,7 @@ data class AuthRequest(
     val username: String,
     val password: String
 )
+data class SettingUpdateRequest(
+    val section: String,  // Раздел, в котором находится настройка
+    val newValue: String  // Новое значение
+)

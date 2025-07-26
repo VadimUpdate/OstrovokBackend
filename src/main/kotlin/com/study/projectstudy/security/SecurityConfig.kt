@@ -33,17 +33,16 @@ class SecurityConfig(
             .csrf { it.disable() }
             .authorizeHttpRequests {
                 it
-                    .requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers("/api/sbp/admin/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
-                    .requestMatchers("/api/sbp/**").hasAuthority("ROLE_ADMIN")  // Только для ROLE_ADMIN
-                    .anyRequest().authenticated()
+                    .requestMatchers("/api/auth/**").permitAll() // Разрешить все для auth
+                    .requestMatchers("/api/sbp/**").hasAnyAuthority("ADMIN", "ROLE_ADMIN")  // Только для админа
+                    .requestMatchers("/api/sbp/admin/**").hasAnyAuthority("ADMIN", "ROLE_ADMIN") // Разрешить и юзерам
+                    .anyRequest().authenticated() // Все остальные запросы должны быть авторизованы
             }
             .sessionManagement {
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
-            .cors()
 
         return http.build()
     }
