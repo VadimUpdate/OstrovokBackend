@@ -1,9 +1,9 @@
-package com.study.projectstudy.controller
+package com.study.backend.controller
 
-import com.study.projectstudy.dto.AuthRequest
-import com.study.projectstudy.dto.AuthResponse
-import com.study.projectstudy.service.AuthService
-import com.study.projectstudy.security.JwtUtil
+import com.study.backend.dto.AuthRequest
+import com.study.backend.dto.AuthResponse
+import com.study.backend.service.AuthService
+import com.study.backend.security.JwtUtil
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 

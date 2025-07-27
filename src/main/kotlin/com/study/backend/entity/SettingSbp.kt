@@ -1,4 +1,4 @@
-package com.study.projectstudy.entity
+package com.study.backend.entity
 
 import jakarta.persistence.*
 

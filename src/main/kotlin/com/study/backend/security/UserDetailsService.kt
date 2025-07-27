@@ -1,7 +1,7 @@
-package com.study.projectstudy.security
+package com.study.backend.security
 
-import com.study.projectstudy.entity.User
-import com.study.projectstudy.repository.UserRepository
+import com.study.backend.entity.User
+import com.study.backend.repository.UserRepository
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException

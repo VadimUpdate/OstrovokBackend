@@ -1,4 +1,4 @@
-package com.study.projectstudy.security
+package com.study.backend.security
 
 import io.jsonwebtoken.*
 import io.jsonwebtoken.security.Keys

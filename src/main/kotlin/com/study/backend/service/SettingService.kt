@@ -1,9 +1,9 @@
-package com.study.projectstudy.service
+package com.study.backend.service
 
-import com.study.projectstudy.dto.SettingDto
-import com.study.projectstudy.dto.SettingSbpDto
-import com.study.projectstudy.repository.SettingRepository
-import com.study.projectstudy.repository.SettingSbpRepository
+import com.study.backend.dto.SettingDto
+import com.study.backend.dto.SettingSbpDto
+import com.study.backend.repository.SettingRepository
+import com.study.backend.repository.SettingSbpRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import org.slf4j.LoggerFactory

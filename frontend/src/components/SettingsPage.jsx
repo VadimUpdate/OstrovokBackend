@@ -47,9 +47,6 @@ const SettingsPage = () => {
         }
     };
 
-    if (loading) return <div>Загрузка...</div>;
-    if (error) return <div style={{ color: "red" }}>{error}</div>;
-
     return (
         <div className="p-4">
             <div className="mb-6 border-b border-gray-300">

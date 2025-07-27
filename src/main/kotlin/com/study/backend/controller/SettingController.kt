@@ -1,7 +1,7 @@
-package com.study.projectstudy.controller
+package com.study.backend.controller
 
-import com.study.projectstudy.dto.SettingUpdateRequest
-import com.study.projectstudy.service.SettingService
+import com.study.backend.dto.SettingUpdateRequest
+import com.study.backend.service.SettingService
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*

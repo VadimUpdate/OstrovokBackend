@@ -1,4 +1,4 @@
-package com.study.projectstudy.dto
+package com.study.backend.dto
 
 /**
  * DTO для входящего тела запроса регистрации и логина.

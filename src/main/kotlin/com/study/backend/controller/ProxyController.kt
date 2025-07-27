@@ -1,4 +1,4 @@
-package com.study.projectstudy.controller
+package com.study.backend.controller
 
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.context.annotation.Bean
@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.RestTemplate
 import java.util.Collections
 import org.springframework.http.HttpMethod
-import com.study.projectstudy.security.JwtUtil
 
 @RestController
 @RequestMapping("/proxy")

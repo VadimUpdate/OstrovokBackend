@@ -1,11 +1,11 @@
-package com.study.projectstudy
+package com.study.backend
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class ProjectStudyApplicationApplication
+class AdminConsoleApplicationApplication
 
 fun main(args: Array<String>) {
-    runApplication< ProjectStudyApplicationApplication>(*args)
+    runApplication< AdminConsoleApplicationApplication>(*args)
 }

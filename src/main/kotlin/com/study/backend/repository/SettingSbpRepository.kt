@@ -1,6 +1,6 @@
-package com.study.projectstudy.repository
+package com.study.backend.repository
 
-import com.study.projectstudy.entity.SettingSbp
+import com.study.backend.entity.SettingSbp
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 

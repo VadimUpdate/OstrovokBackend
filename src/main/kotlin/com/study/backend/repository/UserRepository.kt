@@ -1,6 +1,6 @@
-package com.study.projectstudy.repository
+package com.study.backend.repository
 
-import com.study.projectstudy.entity.User
+import com.study.backend.entity.User
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface UserRepository : JpaRepository<User, Long> {

@@ -1,8 +1,8 @@
-package com.study.projectstudy.service
+package com.study.backend.service
 
-import com.study.projectstudy.entity.User
-import com.study.projectstudy.repository.UserRepository
-import com.study.projectstudy.repository.SettingRepository
+import com.study.backend.entity.User
+import com.study.backend.repository.UserRepository
+import com.study.backend.repository.SettingRepository
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 

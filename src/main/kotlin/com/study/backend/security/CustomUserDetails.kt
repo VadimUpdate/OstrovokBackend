@@ -1,9 +1,8 @@
-package com.study.projectstudy.security
+package com.study.backend.security
 
-import com.study.projectstudy.entity.User
+import com.study.backend.entity.User
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
-import com.study.projectstudy.security.JwtUtil
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 
 class CustomUserDetails(

@@ -1,6 +1,6 @@
-package com.study.projectstudy.dto
+package com.study.backend.dto
 
-import com.study.projectstudy.entity.SettingSbp
+import com.study.backend.entity.SettingSbp
 
 data class SettingSbpDto(
     val id: Long,
