@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 plugins {
     kotlin("jvm") version "1.9.25"
@@ -8,6 +9,18 @@ plugins {
 }
 group = "com.study"
 version = "0.0.1-SNAPSHOT"
+=======
+plugins {
+    kotlin("jvm") version "1.9.25"
+    kotlin("plugin.spring") version "1.9.25"
+    id("org.springframework.boot") version "3.5.6"
+    id("io.spring.dependency-management") version "1.1.7"
+}
+
+group = "ostrovok.secretguest"
+version = "0.0.1-SNAPSHOT"
+description = "OstrovokClient"
+>>>>>>> f70036bbf2dffc17d2a6e61984e121462c508ae9
 
 java {
     toolchain {
@@ -21,6 +34,7 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
+<<<<<<< HEAD
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
@@ -41,6 +55,16 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
 
     implementation("org.yaml:snakeyaml:2.0")
+=======
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    runtimeOnly("org.postgresql:postgresql")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+>>>>>>> f70036bbf2dffc17d2a6e61984e121462c508ae9
 }
 
 kotlin {
@@ -52,7 +76,10 @@ kotlin {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+<<<<<<< HEAD
 
 tasks.test {
     enabled = false
 }
+=======
+>>>>>>> f70036bbf2dffc17d2a6e61984e121462c508ae9
