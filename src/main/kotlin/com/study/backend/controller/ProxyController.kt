@@ -13,7 +13,7 @@ import org.springframework.http.HttpMethod
 @RequestMapping("/proxy")
 class ProxyController(private val restTemplate: RestTemplate) {
 
-    private val backendUrl = "http://admin-backend:8080"
+    private val backendUrl = "http://admin-backend:8000"
 
     @RequestMapping("/**")
     fun proxy(request: HttpServletRequest, @RequestBody(required = false) body: String?): ResponseEntity<String> {

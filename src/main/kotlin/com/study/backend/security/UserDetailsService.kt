@@ -1,6 +1,5 @@
 package com.study.backend.security
 
-import com.study.backend.entity.User
 import com.study.backend.repository.UserRepository
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -13,22 +12,8 @@ class CustomUserDetailsService(
 ) : UserDetailsService {
 
     override fun loadUserByUsername(username: String): UserDetails {
-        // Находим пользователя по имени
-        val user: User = userRepository.findByUsername(username)
+        val user = userRepository.findByUsername(username)
             ?: throw UsernameNotFoundException("User '$username' not found")
-
-        // Получаем роль из базы данных
-        val role = getUserRole(username)
-
-        // Возвращаем CustomUserDetails с ролью
-        return CustomUserDetails(user, role)
-    }
-
-    fun getUserRole(username: String): String {
-        // Получаем роль пользователя
-        val user: User = userRepository.findByUsername(username)
-            ?: throw UsernameNotFoundException("User '$username' not found")
-
-        return user.role // Предполагается, что у User есть поле role типа String
+        return CustomUserDetails(user)
     }
 }

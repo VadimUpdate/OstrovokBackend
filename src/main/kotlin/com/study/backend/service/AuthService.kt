@@ -2,7 +2,6 @@ package com.study.backend.service
 
 import com.study.backend.entity.User
 import com.study.backend.repository.UserRepository
-import com.study.backend.repository.SettingRepository
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service
 class AuthService(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
-    private val settingRepository: SettingRepository
 ) {
 
     fun register(username: String, password: String): Boolean {
@@ -18,7 +16,7 @@ class AuthService(
 
         val encodedPassword = passwordEncoder.encode(password)
 
-        // 👇 Пока временно: username 'admin' — получает роль ADMIN
+
         val role = if (username.lowercase() == "admin") "ROLE_ADMIN" else "ROLE_USER"
         val newUser = User(username = username, password = encodedPassword, role = role)
 

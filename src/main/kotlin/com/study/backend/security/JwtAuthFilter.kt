@@ -27,41 +27,52 @@ class JwtAuthFilter(
         filterChain: FilterChain
     ) {
         val path = request.servletPath
+        logger.debug("JwtAuthFilter: request path = $path")
 
-        // Пропускаем пути для регистрации и логина
-        if (path.startsWith("/api/auth/register") || path.startsWith("/api/auth/login")) {
+        // ==== SKIP only public endpoints ====
+        val skip = listOf("/api/auth/", "/api/profile/") // только публичные эндпоинты
+        if (skip.any { path.startsWith(it) }) {
             filterChain.doFilter(request, response)
             return
         }
 
+        // Получаем Authorization header
         val authHeader = request.getHeader("Authorization")
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            val token = authHeader.substring(7)
+        logger.debug("JwtAuthFilter: Authorization header present = ${authHeader != null}")
 
-            try {
-                val username = jwtUtil.getUsernameFromToken(token)
-                if (username != null && SecurityContextHolder.getContext().authentication == null) {
-                    val userDetails = userDetailsService.loadUserByUsername(username)
+        // Если заголовка нет — продолжаем цепочку (Spring Security выдаст 401/403, если endpoint защищён)
+        if (authHeader.isNullOrBlank() || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response)
+            return
+        }
 
-                    if (jwtUtil.validateToken(token)) {
-                        val authToken = UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.authorities
-                        )
-                        SecurityContextHolder.getContext().authentication = authToken
-                        logger.info("Authentication set for user: $username with roles: ${userDetails.authorities}")
-                    } else {
-                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid token")
-                        logger.warn("Invalid token for user '$username'")
-                        return
-                    }
-                }
+        val token = authHeader.substringAfter("Bearer ").trim()
+        try {
+            val username = jwtUtil.getUsernameFromToken(token)
+            logger.debug("JwtAuthFilter: token sub = $username")
+
+            val userDetails = try {
+                userDetailsService.loadUserByUsername(username)
             } catch (ex: Exception) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Token processing error")
-                logger.error("Error processing token: ${ex.message}", ex)
+                logger.warn("JwtAuthFilter: user not found for sub='$username': ${ex.message}")
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: user not found")
                 return
             }
-        } else {
-            logger.warn("Authorization header missing or malformed")
+
+            if (!jwtUtil.validateToken(token)) {
+                logger.warn("JwtAuthFilter: token validation failed for sub=$username")
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: invalid token")
+                return
+            }
+
+            val authToken = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
+            SecurityContextHolder.getContext().authentication = authToken
+            logger.info("JwtAuthFilter: Authentication set for user '$username' with authorities=${userDetails.authorities}")
+
+        } catch (ex: Exception) {
+            logger.error("JwtAuthFilter: token processing error: ${ex.message}", ex)
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Token processing error")
+            return
         }
 
         filterChain.doFilter(request, response)

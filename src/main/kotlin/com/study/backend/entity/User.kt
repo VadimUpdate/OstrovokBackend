@@ -1,18 +1,30 @@
 package com.study.backend.entity
 
 import jakarta.persistence.*
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "users")
-
 data class User(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    val username: String,
+    @Column(unique = true, nullable = false)
+    var username: String,
 
-    val password: String,
+    @Column(nullable = false)
+    var password: String,
 
-    // например, роли храним строкой с разделителем, можно и коллекцию, но проще пока так
-    val role: String = "ROLE_USER"  // значение по умолчанию
+    @Column(unique = true)
+    var email: String? = null,
+
+    @Column(nullable = false)
+    var role: String = "ROLE_USER",
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    val createdAt: LocalDateTime = LocalDateTime.now(),
+
+    @Column(name = "updated_at")
+    var updatedAt: LocalDateTime? = null
 )

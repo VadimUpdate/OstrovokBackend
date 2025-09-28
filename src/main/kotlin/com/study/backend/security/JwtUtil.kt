@@ -3,96 +3,75 @@ package com.study.backend.security
 import io.jsonwebtoken.*
 import io.jsonwebtoken.security.Keys
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.util.*
 import javax.crypto.SecretKey
+import java.util.Base64
 
 @Component
-class JwtUtil {
+class JwtUtil(
+    @Value("\${jwt.secret}") private val jwtSecretString: String
+) {
 
-    private val jwtSecret: SecretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256)
-    private val jwtExpirationMs = 86400000L // 1 day expiration time
-    private val logger = LoggerFactory.getLogger(JwtUtil::class.java) // Логгер для классов
+    private val logger = LoggerFactory.getLogger(JwtUtil::class.java)
 
-    // Генерация токена
+    // secret из properties, декодируем base64 в bytes
+    private val jwtSecret: SecretKey by lazy {
+        Keys.hmacShaKeyFor(Base64.getDecoder().decode(jwtSecretString))
+    }
+
+    private val accessTokenExpirationMs = 24 * 60 * 60 * 1000L // 1 day, при необходимости уменьшить
+
     fun generateToken(username: String, role: String): String {
-        logger.info("Generating token for username: $username with role: $role")
-
         val now = Date()
-        val expiryDate = Date(now.time + jwtExpirationMs)
+        val expiryDate = Date(now.time + accessTokenExpirationMs)
 
         val token = Jwts.builder()
             .setSubject(username)
-            .claim("role", role)  // Пишем роль как есть, если она передается с префиксом "ROLE_"
+            .claim("role", role)
             .setIssuedAt(now)
             .setExpiration(expiryDate)
             .signWith(jwtSecret)
             .compact()
 
-        logger.info("Token generated successfully. Expiry date: $expiryDate")
+        logger.info("Generated token for $username exp=$expiryDate")
         return token
     }
 
-    // Валидация токена
     fun validateToken(token: String): Boolean {
-        logger.info("Validating token...")
-
         return try {
             val claims = Jwts.parserBuilder()
                 .setSigningKey(jwtSecret)
                 .build()
-                .parseClaimsJws(token) // это проверяет, валиден ли токен
-
-            val isValid = claims.body.expiration?.after(Date()) ?: false
-            if (isValid) {
-                logger.info("Token is valid. Expiry date: ${claims.body.expiration}")
-            } else {
-                logger.warn("Token is expired. Expiry date: ${claims.body.expiration}")
-            }
-            isValid
+                .parseClaimsJws(token)
+            val ok = claims.body.expiration?.after(Date()) ?: false
+            logger.info("validateToken sub=${claims.body.subject} ok=$ok exp=${claims.body.expiration}")
+            ok
+        } catch (ex: ExpiredJwtException) {
+            logger.warn("Token expired: ${ex.message}")
+            false
         } catch (ex: JwtException) {
-            logger.error("Token validation failed: ${ex.message}")
+            logger.error("Invalid token: ${ex.message}")
             false
         }
     }
 
-    // Извлечение имени пользователя из токена
     fun getUsernameFromToken(token: String): String {
-        logger.info("Extracting username from token...")
-
-        return try {
-            val claims = Jwts.parserBuilder()
-                .setSigningKey(jwtSecret)
-                .build()
-                .parseClaimsJws(token)
-                .body
-
-            val username = claims.subject
-            logger.info("Username extracted: $username")
-            username
-        } catch (ex: JwtException) {
-            logger.error("Failed to extract username from token: ${ex.message}")
-            throw IllegalArgumentException("Invalid token")
-        }
+        val claims = Jwts.parserBuilder()
+            .setSigningKey(jwtSecret)
+            .build()
+            .parseClaimsJws(token)
+            .body
+        return claims.subject
     }
 
-    // Извлечение роли из токена
     fun getRoleFromToken(token: String): String? {
-        logger.info("Extracting role from token...")
-
-        return try {
-            val claims = Jwts.parserBuilder()
-                .setSigningKey(jwtSecret)
-                .build()
-                .parseClaimsJws(token)
-                .body
-
-            val role = claims["role"] as String?
-            logger.info("Role extracted: $role")
-            role
-        } catch (ex: JwtException) {
-            logger.error("Failed to extract role from token: ${ex.message}")
-            null
-        }
+        val claims = Jwts.parserBuilder()
+            .setSigningKey(jwtSecret)
+            .build()
+            .parseClaimsJws(token)
+            .body
+        return claims["role"] as String?
     }
 }

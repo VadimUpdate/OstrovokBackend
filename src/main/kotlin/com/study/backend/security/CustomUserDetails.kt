@@ -2,28 +2,20 @@ package com.study.backend.security
 
 import com.study.backend.entity.User
 import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 
 class CustomUserDetails(
-    val user: User,        // Сохраняем информацию о пользователе
-    private val role: String // Добавляем роль
+    private val user: User
 ) : UserDetails {
 
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        // Создаем список авторизаций, добавляя роль как 'ROLE_' префикс
-        return mutableListOf(SimpleGrantedAuthority("ROLE_$role"))
-    }
+    override fun getAuthorities(): Collection<GrantedAuthority> =
+        listOf(SimpleGrantedAuthority(user.role)) // ROLE_USER или ROLE_ADMIN
 
     override fun getPassword(): String = user.password
-
     override fun getUsername(): String = user.username
-
     override fun isAccountNonExpired(): Boolean = true
-
     override fun isAccountNonLocked(): Boolean = true
-
     override fun isCredentialsNonExpired(): Boolean = true
-
     override fun isEnabled(): Boolean = true
 }

@@ -1,1 +1,1 @@
-rootProject.name = "Admin-console"
+rootProject.name = "admin-console"
