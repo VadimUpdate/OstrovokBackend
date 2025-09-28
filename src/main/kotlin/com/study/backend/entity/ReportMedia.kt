@@ -11,12 +11,13 @@ data class ReportMedia(
     val id: UUID = UUID.randomUUID(),
 
     @ManyToOne
-    @JoinColumn(name = "report_id")
+    @JoinColumn(name = "report_id", nullable = false)
     val report: InspectionReport,
 
-    @Column(name = "format_file")
-    val formatFile: String?, // thread file → format file
+    @Column(name = "file_data", nullable = false)
+    @Lob
+    val fileData: ByteArray, // здесь сам файл
 
-    @Column(name = "file_type")
-    val fileType: String
+    @Column(name = "file_type", nullable = false)
+    val fileType: String, // например "image/jpeg" или "video/mp4"
 )

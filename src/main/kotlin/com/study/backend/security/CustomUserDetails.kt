@@ -10,7 +10,7 @@ class CustomUserDetails(
 ) : UserDetails {
 
     override fun getAuthorities(): Collection<GrantedAuthority> =
-        listOf(SimpleGrantedAuthority(user.role)) // ROLE_USER или ROLE_ADMIN
+        listOf(SimpleGrantedAuthority(user.role)) // user.role уже должен быть "ROLE_USER" или "ROLE_ADMIN"
 
     override fun getPassword(): String = user.password
     override fun getUsername(): String = user.username

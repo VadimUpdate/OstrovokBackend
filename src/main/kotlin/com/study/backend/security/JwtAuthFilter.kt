@@ -29,18 +29,27 @@ class JwtAuthFilter(
         val path = request.servletPath
         logger.debug("JwtAuthFilter: request path = $path")
 
-        // ==== SKIP only public endpoints ====
-        val skip = listOf("/api/auth/", "/api/profile/") // только публичные эндпоинты
+        // ==== SKIP public endpoints ====
+        val skip = listOf(
+            "/api/auth", "/api/auth/",
+            "/api/users", "/api/users/",
+            "/api/roles", "/api/roles/",
+            "/api/profiles", "/api/profiles/",
+            "/api/hotels", "/api/hotels/",
+            "/api/profile-status", "/api/profile-status/",
+            "/api/inspection-reports", "/api/inspection-reports/",
+            "/api/report-media", "/api/report-media/",
+            "/api/inspection-reasons", "/api/inspection-reasons/"
+        )
+
         if (skip.any { path.startsWith(it) }) {
             filterChain.doFilter(request, response)
             return
         }
 
-        // Получаем Authorization header
         val authHeader = request.getHeader("Authorization")
         logger.debug("JwtAuthFilter: Authorization header present = ${authHeader != null}")
 
-        // Если заголовка нет — продолжаем цепочку (Spring Security выдаст 401/403, если endpoint защищён)
         if (authHeader.isNullOrBlank() || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response)
             return

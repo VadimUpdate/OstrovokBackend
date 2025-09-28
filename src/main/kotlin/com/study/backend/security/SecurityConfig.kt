@@ -33,7 +33,15 @@ class SecurityConfig(
                 it
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers("/api/profile/**").permitAll()
+                    .requestMatchers("/api/users/**").permitAll()
+                    .requestMatchers("/api/profiles/**").permitAll()
+                    .requestMatchers("/api/hotels/**").permitAll()
+                    .requestMatchers("/api/roles/**").permitAll()
+                    .requestMatchers("/api/hotel-inspections/**").permitAll()
+                    .requestMatchers("/api/inspection-reasons/**").permitAll()
+                    .requestMatchers("/api/profile-status/**").permitAll()
+                    .requestMatchers("/api/report-media/**").permitAll()
+                    .requestMatchers("/api/inspection-reports/**").permitAll()
                     .anyRequest().authenticated()
             }
             .sessionManagement {

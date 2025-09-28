@@ -1,6 +1,5 @@
 package com.study.backend.entity
 
-import com.study.backend.entity.InspectionReason
 import jakarta.persistence.*
 import java.time.LocalDateTime
 import java.util.*
@@ -15,19 +14,12 @@ data class Hotel(
     @Column(nullable = false)
     val name: String,
 
-    @Column(columnDefinition = "description")
     val description: String? = null,
-
-    @Column(name = "action")
     val action: String? = null,
-
     val address: String? = null,
-
     val city: String? = null,
-
     @Column(name = "official_rating")
     val officialRating: Int? = null,
-
     @Column(name = "nees_inspection")
     val neesInspection: Boolean = false,
 

@@ -1,7 +1,7 @@
 HELP.md
 .gradle
 build/
-!gradle/wrapper/gradle-wrapper.jar
+!../../admin-console/gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 
@@ -38,11 +38,8 @@ out/
 
 ### Kotlin ###
 .kotlin
-<<<<<<< HEAD
 
 node_modules/
 package-lock.json
 dist/
 .env
-=======
->>>>>>> f70036bbf2dffc17d2a6e61984e121462c508ae9
