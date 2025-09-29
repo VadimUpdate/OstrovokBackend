@@ -10,7 +10,7 @@ data class Profile(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER) // ⚠️ EAGER чтобы user был всегда загружен
     @JoinColumn(name = "user_id", nullable = false)
     val user: User,
 
