@@ -31,15 +31,7 @@ class JwtAuthFilter(
 
         // ==== SKIP public endpoints ====
         val skip = listOf(
-            "/api/auth", "/api/auth/",
-            "/api/users", "/api/users/",
-            "/api/roles", "/api/roles/",
-            "/api/profiles", "/api/profiles/",
-            "/api/hotels", "/api/hotels/",
-            "/api/profile-status", "/api/profile-status/",
-            "/api/inspection-reports", "/api/inspection-reports/",
-            "/api/report-media", "/api/report-media/",
-            "/api/inspection-reasons", "/api/inspection-reasons/"
+            "/api/auth", "/api/auth/"
         )
 
         if (skip.any { path.startsWith(it) }) {
