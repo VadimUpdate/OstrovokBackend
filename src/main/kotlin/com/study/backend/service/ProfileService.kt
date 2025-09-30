@@ -1,39 +1,68 @@
 package com.study.backend.service
 
+import com.study.backend.dto.ProfileCreateRequest
+import com.study.backend.dto.ProfileUpdateRequest
 import com.study.backend.entity.Profile
+import com.study.backend.entity.User
 import com.study.backend.repository.ProfileRepository
+import com.study.backend.repository.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
 
 @Service
-class ProfileService(private val profileRepository: ProfileRepository) {
+class ProfileService(
+    private val profileRepo: ProfileRepository,
+    private val userRepo: UserRepository
+) {
 
-    fun getAllProfiles(): List<Profile> = profileRepository.findAll()
+    fun getAll(): List<Profile> = profileRepo.findAll()
 
-    fun getProfileById(id: Long): Profile =
-        profileRepository.findById(id).orElseThrow { RuntimeException("Profile not found with id: $id") }
-
-    fun getProfileByUserId(userId: Long): Profile =
-        profileRepository.findByUserId(userId) ?: throw RuntimeException("Profile not found for user id: $userId")
-
-    @Transactional
-    fun createProfile(profile: Profile): Profile = profileRepository.save(profile)
+    fun getById(id: Long): Profile =
+        profileRepo.findById(id).orElseThrow { RuntimeException("Profile not found: $id") }
 
     @Transactional
-    fun updateProfile(id: Long, updatedProfile: Profile): Profile {
-        val existing = getProfileById(id)
-        existing.firstName = updatedProfile.firstName
-        existing.lastName = updatedProfile.lastName
-        existing.phone = updatedProfile.phone
-        existing.address = updatedProfile.address
-        existing.updatedAt = LocalDateTime.now()
-        return profileRepository.save(existing)
+    fun create(req: ProfileCreateRequest): Profile {
+        val user: User = userRepo.findById(req.userId)
+            .orElseThrow { RuntimeException("User not found: ${req.userId}") }
+
+        val profile = Profile(
+            user = user,
+            firstName = req.firstName,
+            lastName = req.lastName,
+            middleName = req.middleName,
+            phone = req.phone,
+            interests = req.interests,
+            tgId = req.tgId,
+            status = req.status,
+            rating = req.rating,
+            address = req.address
+        )
+
+        return profileRepo.save(profile)
     }
 
     @Transactional
-    fun deleteProfile(id: Long) {
-        val existing = getProfileById(id)
-        profileRepository.delete(existing)
+    fun update(id: Long, req: ProfileUpdateRequest): Profile {
+        val existing = getById(id)
+
+        val updated = existing.copy(
+            firstName = req.firstName ?: existing.firstName,
+            lastName = req.lastName ?: existing.lastName,
+            middleName = req.middleName ?: existing.middleName,
+            phone = req.phone ?: existing.phone,
+            interests = req.interests ?: existing.interests,
+            tgId = req.tgId ?: existing.tgId,
+            status = req.status ?: existing.status,
+            rating = req.rating ?: existing.rating,
+            address = req.address ?: existing.address
+        )
+
+        return profileRepo.save(updated)
+    }
+
+    @Transactional
+    fun delete(id: Long) {
+        val existing = getById(id)
+        profileRepo.delete(existing)
     }
 }
