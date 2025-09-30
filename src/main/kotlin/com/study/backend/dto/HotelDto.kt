@@ -8,10 +8,10 @@ data class HotelRequest(
     val description: String? = null,
     val action: String? = null,
     val address: String? = null,
-    val city: String? = null,
+    val cityId: Long?,                     // id города
     val officialRating: Int? = null,
     val neesInspection: Boolean = false,
-    val inspectionReasonId: UUID? = null,
+    val inspectionReasonId: UUID?,         // id причины инспекции
     val lastInspection: LocalDateTime? = null,
     val secretGreetAvgTail: Double? = null
 )

@@ -31,8 +31,10 @@ class SecurityConfig(
             .cors { it.configurationSource(corsConfigurationSource()) }
             .authorizeHttpRequests {
                 it
+                    .requestMatchers("/error").permitAll() // ошибки Spring
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/api/hotels/**").permitAll() // все методы для отелей
                     .requestMatchers("/api/users/**").authenticated()
                     .requestMatchers(HttpMethod.GET, "/api/profiles/**").authenticated()
                     .requestMatchers(HttpMethod.POST, "/api/profiles/**").hasAnyRole("USER","ADMIN")
@@ -40,8 +42,6 @@ class SecurityConfig(
                     .requestMatchers(HttpMethod.DELETE, "/api/profiles/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.GET, "/api/cities/**").authenticated()
                     .requestMatchers("/api/cities/**").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.GET, "/api/hotels/**").authenticated()
-                    .requestMatchers("/api/hotels/**").hasRole("ADMIN")
                     .requestMatchers("/api/roles/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.GET, "/api/hotel-inspections/**").authenticated()
                     .requestMatchers("/api/hotel-inspections/**").hasRole("ADMIN")

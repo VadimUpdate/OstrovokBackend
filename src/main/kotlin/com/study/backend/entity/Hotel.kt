@@ -8,8 +8,8 @@ import java.util.*
 @Table(name = "hotels")
 data class Hotel(
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    val id: UUID = UUID.randomUUID(),
+    @GeneratedValue
+    val id: UUID? = null,
 
     @Column(nullable = false)
     val name: String,
@@ -17,9 +17,14 @@ data class Hotel(
     val description: String? = null,
     val action: String? = null,
     val address: String? = null,
-    val city: String? = null,
+
+    @ManyToOne
+    @JoinColumn(name = "city_id")
+    var city: City? = null,
+
     @Column(name = "official_rating")
     val officialRating: Int? = null,
+
     @Column(name = "nees_inspection")
     val neesInspection: Boolean = false,
 
