@@ -32,7 +32,7 @@ class HotelController(
             description = request.description,
             action = request.action,
             address = request.address,
-            city = request.city,
+            city = "request.city", // Пока что строка, нужна таблица
             officialRating = request.officialRating,
             neesInspection = request.neesInspection,
             inspectionReason = inspectionReason,

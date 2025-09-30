@@ -37,7 +37,7 @@ class UserService(private val userRepository: UserRepository) {
         val existingUser = getUserById(id)
 
         existingUser.username = updatedUser.username
-        existingUser.password = updatedUser.password
+        //existingUser.password = updatedUser.password
         val email = updatedUser.email
         existingUser.email = email
         if (email != null && userRepository.findAll().any { it.email == email && it.id != id }) {

@@ -33,8 +33,7 @@ class SecurityConfig(
                 it
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
-                    .requestMatchers("/api/users/**").hasRole("ADMIN")
+                    .requestMatchers("/api/users/**").authenticated()
                     .requestMatchers(HttpMethod.GET, "/api/profiles/**").authenticated()
                     .requestMatchers(HttpMethod.POST, "/api/profiles/**").hasAnyRole("USER","ADMIN")
                     .requestMatchers(HttpMethod.PUT, "/api/profiles/**").hasRole("ADMIN")
