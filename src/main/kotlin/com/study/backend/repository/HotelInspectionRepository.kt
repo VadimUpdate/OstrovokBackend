@@ -6,4 +6,4 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface HotelInspectionRequestRepository : JpaRepository<HotelInspectionRequest, UUID>
+interface HotelInspectionRepository : JpaRepository<HotelInspectionRequest, UUID>

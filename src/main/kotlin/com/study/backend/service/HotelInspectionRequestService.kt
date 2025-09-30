@@ -1,14 +1,13 @@
 package com.study.backend.service
 
 import com.study.backend.entity.HotelInspectionRequest
-import com.study.backend.repository.HotelInspectionRequestRepository
+import com.study.backend.repository.HotelInspectionRepository  // <--- правильное имя
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
-class HotelInspectionRequestService(private val repo: HotelInspectionRequestRepository) {
-
+class HotelInspectionRequestService(private val repo: HotelInspectionRepository) {  // <--- правильно
     fun getAll(): List<HotelInspectionRequest> = repo.findAll()
 
     fun getById(id: UUID): HotelInspectionRequest =
