@@ -8,7 +8,7 @@ import java.util.*
 data class ReportMedia(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    val id: UUID = UUID.randomUUID(),
+    val id: UUID? = null,
 
     @ManyToOne
     @JoinColumn(name = "report_id", nullable = false)

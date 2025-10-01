@@ -64,7 +64,9 @@ class AuthController(
     fun verify(@RequestBody body: Map<String, String>): ResponseEntity<Map<String, String>> {
         val token = body["token"] ?: return ResponseEntity.badRequest().body(mapOf("detail" to "Token is required"))
         return if (jwtUtil.validateToken(token)) {
-            ResponseEntity.ok(mapOf("detail" to "Token is valid"))
+            val username = jwtUtil.getUsernameFromToken(token)
+            val role = authService.getUserByUsername(username)?.role ?: "ROLE_USER"
+            ResponseEntity.ok(mapOf("detail" to "Token is valid","role" to role, "username" to username))
         } else {
             ResponseEntity.status(401).body(mapOf("detail" to "Invalid or expired token", "code" to "token_not_valid"))
         }
