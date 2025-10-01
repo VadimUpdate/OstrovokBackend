@@ -6,13 +6,14 @@ data class ProfileCreateRequest(
     val userId: Long,
     val firstName: String?,
     val lastName: String?,
-    val middleName: String?,
+    val patronymic: String?,
     val phone: String?,
     val interests: String?,
     val tgId: String?,
     val status: String?,
     val rating: Double?,
-    val address: String?
+    val address: String?,
+    val cityId: Long,
 )
 
 data class ProfileUpdateRequest(
@@ -24,5 +25,7 @@ data class ProfileUpdateRequest(
     val tgId: String?,
     val status: String?,
     val rating: Double?,
-    val address: String?
+    val address: String?,
+    val cityId: Long,
+    val userId: Long,
 )

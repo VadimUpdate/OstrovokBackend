@@ -15,14 +15,18 @@ data class Profile(
     @JoinColumn(name = "user_id", nullable = false)
     val user: User,
 
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "city_id", nullable = false)
+    val city: City,
+
     @Column(name = "first_name")
     var firstName: String? = null,
 
     @Column(name = "last_name")
     var lastName: String? = null,
 
-    @Column(name = "middle_name")
-    var middleName: String? = null,
+    @Column(name = "patronymic")
+    var patronymic: String? = null,
 
     @Column(name = "phone")
     var phone: String? = null,
