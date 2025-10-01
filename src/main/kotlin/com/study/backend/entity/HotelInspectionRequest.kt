@@ -9,7 +9,7 @@ import java.util.*
 data class HotelInspectionRequest(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    val id: UUID = UUID.randomUUID(),
+    val id: UUID? = null,
 
     @ManyToOne
     @JoinColumn(name = "hotel_id")

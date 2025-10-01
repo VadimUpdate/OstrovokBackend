@@ -54,6 +54,7 @@ class SecurityConfig(
                     .requestMatchers("/api/report-media/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.GET, "/api/inspection-reports/**").authenticated()
                     .requestMatchers(HttpMethod.POST, "/api/inspection-reports/**").hasAnyRole("USER","ADMIN")
+                    .requestMatchers("/api/guest-requests/**").permitAll()
                     .requestMatchers(HttpMethod.PUT, "/api/inspection-reports/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/api/inspection-reports/**").hasRole("ADMIN")
                     .anyRequest().authenticated()

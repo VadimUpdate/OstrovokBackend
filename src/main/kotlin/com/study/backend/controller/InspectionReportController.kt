@@ -1,11 +1,14 @@
 package com.study.backend.controller
 
 import com.study.backend.dto.InspectionReportRequest
+import com.study.backend.dto.ProfileCreateRequest
 import com.study.backend.entity.GuestRequest
 import com.study.backend.entity.InspectionReport
+import com.study.backend.entity.Profile
 import com.study.backend.repository.GuestRequestRepository
 import com.study.backend.repository.InspectionReportRepository
 import com.study.backend.service.InspectionReportService
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -26,7 +29,7 @@ class InspectionReportController(
 
     @PostMapping
     fun create(@RequestBody report: InspectionReport): InspectionReport {
-        val guestRequest = guestRequestRepository.findById(report.guestRequest.id)
+        val guestRequest = guestRequestRepository.findById(report.guestRequest.id ?: UUID.randomUUID())
             .orElseThrow { RuntimeException("GuestRequest not found with id ${report.guestRequest.id}") }
 
         return inspectionReportRepository.save(report.copy(guestRequest = guestRequest))
