@@ -1,0 +1,16 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ostrovok-backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:${APP_PORT}/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
