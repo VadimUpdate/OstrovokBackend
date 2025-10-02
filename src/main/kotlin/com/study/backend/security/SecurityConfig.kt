@@ -35,11 +35,8 @@ class SecurityConfig(
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/api/hotels/**").permitAll() // все методы для отелей
-                    .requestMatchers("/api/users/**").authenticated()
-                    .requestMatchers(HttpMethod.GET, "/api/profiles/**").authenticated()
-                    .requestMatchers(HttpMethod.POST, "/api/profiles/**").hasAnyRole("USER","ADMIN")
-                    .requestMatchers(HttpMethod.PUT, "/api/profiles/**").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.DELETE, "/api/profiles/**").hasRole("ADMIN")
+                    .requestMatchers("/api/users/**").permitAll()
+                    .requestMatchers("/api/profiles/**").permitAll()
                     .requestMatchers( "/api/cities/**").permitAll()
                     .requestMatchers("/api/roles/**").hasRole("ADMIN")
                     .requestMatchers(HttpMethod.GET, "/api/hotel-inspections/**").authenticated()
