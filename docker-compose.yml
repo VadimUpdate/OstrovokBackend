@@ -8,9 +8,21 @@ services:
     env_file:
       - .env
     ports:
-      - "${APP_PORT}:${APP_PORT}"
+      - "8081:8080"  # Бэкенд теперь только на 8081
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://127.0.0.1:${APP_PORT}/health || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:8081/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  nginx:
+    image: nginx:alpine
+    container_name: ostrovok-nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"  # Основной вход в приложение
+    volumes:
+      - ./buildClient:/usr/share/nginx/html  # Монтируем собранный React проект
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf  # Монтируем конфиг Nginx
+    depends_on:
+      - app
