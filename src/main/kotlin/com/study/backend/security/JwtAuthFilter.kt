@@ -30,9 +30,7 @@ class JwtAuthFilter(
         logger.debug("JwtAuthFilter: request path = $path")
 
         // ==== SKIP public endpoints ====
-        val skip = listOf(
-            "/api/auth", "/api/auth/"
-        )
+        val skip = listOf("/api/auth", "/api/auth/", "/health", "/health/")
 
         if (skip.any { path.startsWith(it) }) {
             filterChain.doFilter(request, response)

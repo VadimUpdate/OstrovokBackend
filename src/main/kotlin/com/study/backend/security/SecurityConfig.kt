@@ -32,6 +32,7 @@ class SecurityConfig(
             .authorizeHttpRequests {
                 it
                     .requestMatchers("/error").permitAll() // ошибки Spring
+                    .requestMatchers("/health/**").permitAll()
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/api/hotels/**").permitAll() // все методы для отелей
